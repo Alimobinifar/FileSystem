@@ -30,4 +30,50 @@
 ---
 
 ## 📦 ساختار فایل‌ها
+FileManagerApp/
+├── Program.cs // فایل اصلی برنامه و منوی کاربر
+└── FileManager.cs // کلاس کمکی برای انجام عملیات روی فایل‌ها و پوشه‌ها
 
+---
+
+## 📄 نمونه کد (CreateAndWriteFile)
+
+در کلاس `FileManager` یکی از متدهای اصلی به صورت زیر پیاده‌سازی شده است:
+
+```csharp
+public static void CreateAndWriteFile(string path, string content)
+{
+    try
+    {
+        string directory = Path.GetDirectoryName(path);
+
+        if (!Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+            Console.WriteLine($"Directory {directory} created.");
+        }
+
+        File.WriteAllText(path, content);
+        Console.WriteLine($"File {path} has been created and content written successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred while creating/writing the file: {ex.Message}");
+    }
+}
+
+برای درک بهتر این پروژه، پیشنهاد می‌شود با موارد زیر آشنا باشید:
+
+اصول پایه برنامه‌نویسی به زبان #C
+
+فضای نام System.IO
+
+متدهای کلاس‌های File, Directory, Path, FileInfo
+
+🤝 مشارکت
+اگر دوست دارید ویژگی جدیدی به برنامه اضافه کنید (مثل کپی فایل، جستجو در محتویات، ویرایش فایل‌ها و...) خوشحال می‌شوم Pull Request ارسال کنید.
+
+🧑‍💻 توسعه‌دهنده
+👤 Ali Mobinifar
+
+📧 Email: mobinifarAli62@gmail.com
