@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 
-namespace FleSystem
+namespace FileSystem
 {
     public static class FileManager
     {
@@ -15,11 +10,11 @@ namespace FleSystem
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
-                Console.WriteLine("Folder created", path);
+                Console.WriteLine($"✅ Folder created: {path}");
             }
             else
             {
-                Console.WriteLine(path, "is already exists");
+                Console.WriteLine($"ℹ️ Folder already exists: {path}");
             }
         }
 
@@ -27,22 +22,22 @@ namespace FleSystem
         {
             if (!Directory.Exists(path))
             {
-                Console.WriteLine($"path {path} does not exists");
+                Console.WriteLine($"❌ Path does not exist: {path}");
                 return;
             }
 
-            Console.WriteLine("Files : ");
+            Console.WriteLine($"\n📁 Listing contents of: {path}");
 
+            Console.WriteLine("\nFiles:");
             foreach (var file in Directory.GetFiles(path))
             {
-                Console.WriteLine(Path.GetFileName(file));
+                Console.WriteLine($"- {Path.GetFileName(file)}");
             }
 
-            Console.WriteLine("Folders : ");
-
-            foreach (var folder in Directory.GetDirectories(path))
+            Console.WriteLine("\nDirectories:");
+            foreach (var dir in Directory.GetDirectories(path))
             {
-                Console.WriteLine(Path.GetFileName(folder));
+                Console.WriteLine($"- {Path.GetFileName(dir)}");
             }
         }
 
@@ -50,78 +45,103 @@ namespace FleSystem
         {
             try
             {
-                string directory = Path.GetDirectoryName(path);
+                string? directory = Path.GetDirectoryName(path);
 
-                if (!Directory.Exists(directory))
+                if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
-                    Console.WriteLine($"Directory {directory} created.");
+                    Console.WriteLine($"📁 Directory created: {directory}");
                 }
 
                 File.WriteAllText(path, content);
-                Console.WriteLine($"File {path} has been created and content written successfully.");
+                Console.WriteLine($"✅ File created and content written: {path}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred while creating/writing the file: {ex.Message}");
+                Console.WriteLine($"❌ Failed to create/write file: {ex.Message}");
             }
         }
 
-
         public static void ReadFile(string path)
         {
-            if (File.Exists(path))
+            if (!File.Exists(path))
+            {
+                Console.WriteLine($"❌ File not found: {path}");
+                return;
+            }
+
+            try
             {
                 string content = File.ReadAllText(path);
-                Console.WriteLine("content:");
+                Console.WriteLine($"\n📄 File content ({path}):\n");
                 Console.WriteLine(content);
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("File does not exists.");
+                Console.WriteLine($"❌ Error reading file: {ex.Message}");
             }
         }
 
         public static void DeleteFile(string path)
         {
-            if (File.Exists(path))
+            if (!File.Exists(path))
+            {
+                Console.WriteLine($"❌ File not found: {path}");
+                return;
+            }
+
+            try
             {
                 File.Delete(path);
-                Console.WriteLine("File has been deleted successfully");
+                Console.WriteLine($"🗑️ File deleted: {path}");
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("File does not exists");
+                Console.WriteLine($"❌ Error deleting file: {ex.Message}");
             }
         }
 
         public static void MoveFile(string sourcePath, string destinationPath)
         {
-            if (Directory.Exists(sourcePath))
+            if (!File.Exists(sourcePath))
             {
-                File.Move(sourcePath, destinationPath);
-                Console.WriteLine("File has been moved successfully");
+                Console.WriteLine($"❌ Source file not found: {sourcePath}");
+                return;
             }
-            else
+
+            try
             {
-                Console.WriteLine($"{sourcePath} Does not exists");
+                string? destinationDir = Path.GetDirectoryName(destinationPath);
+                if (!string.IsNullOrWhiteSpace(destinationDir) && !Directory.Exists(destinationDir))
+                {
+                    Directory.CreateDirectory(destinationDir);
+                    Console.WriteLine($"📁 Destination directory created: {destinationDir}");
+                }
+
+                File.Move(sourcePath, destinationPath);
+                Console.WriteLine($"✅ File moved to: {destinationPath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Failed to move file: {ex.Message}");
             }
         }
 
         public static void ShowFileInfo(string filePath)
         {
-            if (File.Exists(filePath))
+            if (!File.Exists(filePath))
             {
-                FileInfo fileInfo = new FileInfo(filePath);
-                Console.WriteLine($"File Name {fileInfo.Name}");
-                Console.WriteLine($"File Size {fileInfo.Length}");
-                Console.WriteLine($"Created date {fileInfo.CreationTime}");
-                Console.WriteLine($"Last Change {fileInfo.LastWriteTime}");
+                Console.WriteLine($"❌ File not found: {filePath}");
+                return;
             }
-            else
-            {
-                Console.WriteLine("File does not exists");
-            }
+
+            FileInfo fileInfo = new FileInfo(filePath);
+
+            Console.WriteLine($"\n📄 File Info for: {filePath}");
+            Console.WriteLine($"- Name:         {fileInfo.Name}");
+            Console.WriteLine($"- Size:         {fileInfo.Length} bytes");
+            Console.WriteLine($"- Created At:   {fileInfo.CreationTime}");
+            Console.WriteLine($"- Last Modified:{fileInfo.LastWriteTime}");
         }
     }
 }
